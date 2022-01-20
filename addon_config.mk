@@ -110,3 +110,8 @@ vs:
 	ADDON_INCLUDES_EXCLUDE += libs/ffmpeg/include/libavutil
 	ADDON_INCLUDES_EXCLUDE += libs/ffmpeg/include/libavcodec
 	ADDON_INCLUDES_EXCLUDE += libs/ffmpeg/include/libswresample
+
+msys2:
+	ADDON_LDFLAGS += -ltbb -lavcodec -lavformat -lavutil -lswresample -lsnappy
+	ADDON_LIBS += bcrypt.lib
+	ADDON_LIBS += Secur32.lib
