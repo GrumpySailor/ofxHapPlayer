@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*
  ofxHapPlayer
- 
+
  A Hap player for OpenFrameworks
 
  */
@@ -160,7 +160,7 @@ ofxHapPlayer::~ofxHapPlayer()
 bool ofxHapPlayer::load(string name)
 {
 	_moviePath = name;
-	
+
     /*
     Close any open movie
     */
@@ -990,7 +990,7 @@ void ofxHapPlayer::setTimeout(int microseconds)
 ofxHapPlayer::AudioOutput::AudioOutput()
 : _started(false), _channels(0), _sampleRate(0)
 {
-    
+
 }
 
 ofxHapPlayer::AudioOutput::~AudioOutput()
@@ -1037,20 +1037,26 @@ void ofxHapPlayer::AudioOutput::start()
 {
     if (!_started)
     {
-        ofSoundStreamSettings settings;
-        settings.numInputChannels = 0;
-        settings.numOutputChannels = _channels;
-        settings.sampleRate = _sampleRate;
-        settings.setOutListener(this);
+        auto deviceList = _soundStream.getDeviceList(ofSoundDevice::Api::MS_ASIO);
+        for (std::size_t i = 0; i < deviceList.size(); i++)
+        {
+            if (deviceList[i].name.find("Dante Virtual Soundcard") == std::string::npos) continue;
 
-        // TODO: best values for last 2 params?
-        settings.bufferSize = 128;
-        settings.numBuffers = 2;
+            ofSoundStreamSettings settings;
+            settings.setOutListener(this);
+            settings.setOutDevice(deviceList[i]);
+            settings.sampleRate = _sampleRate;
+            settings.numOutputChannels = _channels;
+            settings.numInputChannels = 0;
+            settings.bufferSize = 128;
+            settings.numBuffers = 2;
+            _started = soundStream.setup(settings);
+            break;
+        }
 
-        _started = _soundStream.setup(settings);
         if (!_started)
         {
-            ofLogError("ofxHapPlayer", "Error starting audio playback.");
+            ofLogError("ofxHapPlayer", "Error starting audio playback. Check Dante Virtual Soundcard is on.");
         }
     }
     else
