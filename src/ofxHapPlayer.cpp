@@ -1050,7 +1050,7 @@ void ofxHapPlayer::AudioOutput::start()
             settings.numInputChannels = 0;
             settings.bufferSize = 128;
             settings.numBuffers = 2;
-            _started = soundStream.setup(settings);
+            _started = _soundStream.setup(settings);
             break;
         }
 
