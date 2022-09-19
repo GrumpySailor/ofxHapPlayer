@@ -43,7 +43,7 @@ extern "C" {
 #include <hap.h>
 }
 #if defined(TARGET_WIN32)
-#include <tbb/compat/ppl.h>
+#include <oneapi/tbb.h>
 #elif defined(TARGET_LINUX)
 #include <dispatch/dispatch.h>
 #endif
@@ -103,7 +103,7 @@ namespace ofxHapPY {
             function(p, i);
         });
 #elif defined(TARGET_WIN32)
-        Concurrency::parallel_for(0U, count, [&](unsigned int i) {
+        tbb::parallel_for(0U, count, [&](unsigned int i) {
             function(p, i);
         });
 #else
